@@ -60,7 +60,7 @@ app.get("/:dimensions", (req, res) => {
 
   // Set text color and font
   ctx.fillStyle = canvasTextColor;
-  ctx.font = `${canvasFontSize}px sans-serif`;
+  ctx.font = `${canvasFontSize}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
 
   // Measure text dimensions
   const textMetrics = ctx.measureText(canvasText);
