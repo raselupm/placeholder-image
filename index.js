@@ -1,4 +1,5 @@
-const { createCanvas } = require("canvas");
+const { createCanvas, registerFont } = require("canvas");
+const path = require("node:path");
 const express = require("express");
 const app = express();
 
@@ -51,6 +52,8 @@ app.get("/:dimensions", (req, res) => {
   const defaultFontSize = Math.min(canvasWidth, canvasHeight) / 8;
   const canvasFontSize = fontSize || defaultFontSize;
 
+  registerFont(path.resolve("./fonts/Helvetica.ttf"), { family: "Helvetica" });
+
   const canvas = createCanvas(canvasWidth, canvasHeight);
   const ctx = canvas.getContext("2d");
 
@@ -60,7 +63,7 @@ app.get("/:dimensions", (req, res) => {
 
   // Set text color and font
   ctx.fillStyle = canvasTextColor;
-  ctx.font = `${canvasFontSize}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+  ctx.font = `${canvasFontSize}px Helvetica`;
 
   // Measure text dimensions
   const textMetrics = ctx.measureText(canvasText);
@@ -85,5 +88,5 @@ app.get("/:dimensions", (req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log("Server is running on port 3000");
+  console.log("Server is running on http://localhost:3000");
 });
