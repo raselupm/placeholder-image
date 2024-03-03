@@ -11,5 +11,10 @@
       "src": "/(.*)",
       "dest": "index.js"
     }
-  ]
+  ],
+  "functions": {
+    "api/with-font-file.js": {
+      "includeFiles": "fonts/**"
+    }
+  }
 }

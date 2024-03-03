@@ -1,6 +1,8 @@
-const { createCanvas } = require("canvas");
+const { createCanvas, registerFont } = require("canvas");
 const express = require("express");
 const app = express();
+
+app.use("/fonts", express.static(__dirname + "/fonts"));
 
 // Function to convert color to valid CSS format (name or hex code)
 function getColorValue(color) {
@@ -58,9 +60,13 @@ app.get("/:dimensions", (req, res) => {
   ctx.fillStyle = canvasBackgroundColor;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
+  // register font
+  const fontPath = __dirname + "/fonts/OpenSans-Bold.ttf";
+  registerFont(fontPath, { family: "Open Sans" });
+
   // Set text color and font
   ctx.fillStyle = canvasTextColor;
-  ctx.font = `${canvasFontSize}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+  ctx.font = `${canvasFontSize}px "Open Sans"`;
 
   // Measure text dimensions
   const textMetrics = ctx.measureText(canvasText);
