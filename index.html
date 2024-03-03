@@ -69,6 +69,22 @@
                 margin: 0 0 20px;
                 font-size: 80%;
             }
+            .gradBG-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 20px 0;
+            }
+            .gradBG-container input {
+                margin: 0 10px;
+                padding: 2px;
+            }
+            .gradBG-container label {
+                margin: 0 10px;
+            }
+            .gradBG-container select {
+                padding: 5px;
+            }
         </style>
     </head>
     <body>
@@ -110,6 +126,35 @@
                     id="bg"
                     oninput="generatePlaceholder()"
                 />
+
+               <div class="gradBG-container">
+                <input oninput="generatePlaceholder()" id="gradBG" type="checkbox">
+                <label  for="gradBG">Gradient Background:</label>
+
+                <label for="bgStart">From:</label>
+                <input
+                    value="#000000"
+                    type="color"
+                    id="bgStart"
+                    oninput="generatePlaceholder()"
+                />
+                <label for="bgEnd">To:</label>
+                <input
+                    value="#ffffff"
+                    type="color"
+                    id="bgEnd"
+                    oninput="generatePlaceholder()"
+                />
+                <label for="bgAngle">Direction: </label>
+                <select id="bgAngle" oninput="generatePlaceholder()">
+                    <option value="0">Left to Right</option>
+                    <option value="90">Top to Bottom</option>
+                    <option value="45">Top Left to Bottom Right</option>
+                    <option value="135">Top Right to Bottom Left</option>
+                </select>
+
+                
+               </div>
             </div>
 
             <div class="text-input">
@@ -127,8 +172,19 @@
                 const width = document.getElementById("width").value || 200;
                 const height = document.getElementById("height").value || 200;
                 let imageUrl = `/${width}x${height}?`;
+
+                const useGradient = document.getElementById("gradBG").checked;
                 const bgColor = document.getElementById("bg").value;
-                imageUrl += `bg=${bgColor.substring(1)}`;
+                const gradStart = document.getElementById("bgStart").value;
+                const gradEnd = document.getElementById("bgEnd").value;
+                const bgAngle = document.getElementById("bgAngle").value;
+
+                if (useGradient) {
+                    imageUrl += `gradient=true&startColor=${gradStart.substring(1)}&endColor=${gradEnd.substring(1)}&angle=${bgAngle}`;
+                    console.log(imageUrl)
+                } else {
+                    imageUrl += `bg=${bgColor.substring(1)}`;
+                }
 
                 const textColor = document.getElementById("textColor").value;
                 imageUrl += `&textColor=${textColor.substring(1)}`;

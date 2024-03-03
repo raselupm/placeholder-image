@@ -41,7 +41,9 @@ app.get("/:dimensions", (req, res) => {
   // Parse URL parameters
   const { dimensions } = req.params;
   const [width, height] = dimensions.split("x");
-  const { bg, text, textColor, fontSize } = req.query;
+  const { bg, text, textColor, fontSize, gradient, startColor, endColor, angle } = req.query;
+
+  
 
   // Set default values
   const canvasWidth = parseInt(width) || 800;
@@ -52,22 +54,44 @@ app.get("/:dimensions", (req, res) => {
   const defaultFontSize = Math.min(canvasWidth, canvasHeight) / 8;
   const canvasFontSize = fontSize || defaultFontSize;
 
+
+
   registerFont(path.resolve("./fonts/Helvetica.ttf"), { family: "Helvetica" });
 
   const canvas = createCanvas(canvasWidth, canvasHeight);
-  const ctx = canvas.getContext("2d");
+  const gradientCtx = canvas.getContext("2d");
 
   // Set background color
-  ctx.fillStyle = canvasBackgroundColor;
-  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  // ctx.fillStyle = canvasBackgroundColor;
+  // ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  // check if gradient is true
+  if(gradient === "true") {
+    // Create gradient
+    const angleInRadians = angle * (Math.PI / 180);
+    const x2 = canvasWidth * Math.cos(angleInRadians);
+    const y2 = canvasHeight * Math.sin(angleInRadians);
+    const gr = gradientCtx.createLinearGradient(0, 0, x2, y2);
+    
+    // add color stops
+    gr.addColorStop(0, `#${startColor}`);
+    gr.addColorStop(1, `#${endColor}`);
+    
+    // fill style with gradient
+    gradientCtx.fillStyle = gr;
+    gradientCtx.fillRect(0, 0, canvasWidth, canvasHeight);
+  }else {
+    gradientCtx.fillStyle = canvasBackgroundColor;
+    gradientCtx.fillRect(0, 0, canvasWidth, canvasHeight);
+  }
 
   // Set text color and font
-  ctx.fillStyle = canvasTextColor;
-  ctx.font = `${canvasFontSize}px Helvetica`;
+  gradientCtx.fillStyle = canvasTextColor;
+  gradientCtx.font = `${canvasFontSize}px Helvetica`;
 
 
   // Measure text dimensions
-  const textMetrics = ctx.measureText(canvasText);
+  const textMetrics = gradientCtx.measureText(canvasText);
   const textWidth = textMetrics.width;
   const textHeight = canvasFontSize; // Assuming font size is 30px
 
@@ -76,7 +100,7 @@ app.get("/:dimensions", (req, res) => {
   const y = canvasHeight / 2 + textHeight / 2;
 
   // Draw text
-  ctx.fillText(canvasText, x, y);
+  gradientCtx.fillText(canvasText, x, y);
 
   // Convert canvas to buffer
   const buffer = canvas.toBuffer(`image/png`);
