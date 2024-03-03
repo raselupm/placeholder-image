@@ -3,6 +3,8 @@ const path = require("node:path");
 const express = require("express");
 const app = express();
 
+app.use("/fonts", express.static(__dirname + "/fonts"));
+
 // Function to convert color to valid CSS format (name or hex code)
 function getColorValue(color) {
   // Check if the color is a valid CSS color name
@@ -60,6 +62,10 @@ app.get("/:dimensions", (req, res) => {
   // Set background color
   ctx.fillStyle = canvasBackgroundColor;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  // register font
+  const fontPath = __dirname + "/fonts/OpenSans-Bold.ttf";
+  registerFont(fontPath, { family: "Open Sans" });
 
   // Set text color and font
   ctx.fillStyle = canvasTextColor;
