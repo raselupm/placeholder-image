@@ -40,7 +40,7 @@ app.get("/:dimensions", (req, res) => {
   // Parse URL parameters
   const { dimensions } = req.params;
   const [width, height] = dimensions.split("x");
-  const { bg, text, textColor, font, fontSize } = req.query;
+  const { bg, text, textColor, fontSize } = req.query;
 
   // Set default values
   const canvasWidth = parseInt(width) || 800;
@@ -48,7 +48,6 @@ app.get("/:dimensions", (req, res) => {
   const canvasBackgroundColor = getColorValue(bg || "eeeeee");
   const canvasTextColor = getColorValue(textColor || "000000");
   const canvasText = text || `${canvasWidth}x${canvasHeight}`;
-  const canvasFont = font || "Arial";
   const defaultFontSize = Math.min(canvasWidth, canvasHeight) / 8;
   const canvasFontSize = fontSize || defaultFontSize;
 
@@ -61,7 +60,7 @@ app.get("/:dimensions", (req, res) => {
 
   // Set text color and font
   ctx.fillStyle = canvasTextColor;
-  ctx.font = `${canvasFontSize}px ${canvasFont}`;
+  ctx.font = `${canvasFontSize}px sans-serif`;
 
   // Measure text dimensions
   const textMetrics = ctx.measureText(canvasText);
