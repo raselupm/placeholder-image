@@ -41,7 +41,7 @@ app.get("/:dimensions", (req, res) => {
   // Parse URL parameters
   const { dimensions } = req.params;
   const [width, height] = dimensions.split("x");
-  const { bg, text, textColor, fontSize, gradient, startColor, endColor, angle } = req.query;
+  const { bg, text, textColor, fontSize, gradient, startColor, endColor, angle, radius } = req.query;
 
   
 
@@ -53,37 +53,31 @@ app.get("/:dimensions", (req, res) => {
   const canvasText = text || `${canvasWidth}x${canvasHeight}`;
   const defaultFontSize = Math.min(canvasWidth, canvasHeight) / 8;
   const canvasFontSize = fontSize || defaultFontSize;
-
-
+  const imageRadius = parseInt(radius) || 0;
 
   registerFont(path.resolve("./fonts/Helvetica.ttf"), { family: "Helvetica" });
 
   const canvas = createCanvas(canvasWidth, canvasHeight);
   const gradientCtx = canvas.getContext("2d");
 
-  // Set background color
-  // ctx.fillStyle = canvasBackgroundColor;
-  // ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  //Border radius
+  roundRect(gradientCtx, 0, 0, canvasWidth, canvasHeight, imageRadius);
 
-  // check if gradient is true
-  if(gradient === "true") {
-    // Create gradient
-    const angleInRadians = angle * (Math.PI / 180);
-    const x2 = canvasWidth * Math.cos(angleInRadians);
-    const y2 = canvasHeight * Math.sin(angleInRadians);
-    const gr = gradientCtx.createLinearGradient(0, 0, x2, y2);
-    
-    // add color stops
-    gr.addColorStop(0, `#${startColor}`);
-    gr.addColorStop(1, `#${endColor}`);
-    
-    // fill style with gradient
-    gradientCtx.fillStyle = gr;
-    gradientCtx.fillRect(0, 0, canvasWidth, canvasHeight);
-  }else {
+  if (gradient === "true") {
+    fillGradientColor(
+      gradientCtx,
+      angle,
+      canvasWidth,
+      canvasHeight,
+      startColor,
+      endColor
+    );
+  } else {
     gradientCtx.fillStyle = canvasBackgroundColor;
-    gradientCtx.fillRect(0, 0, canvasWidth, canvasHeight);
   }
+
+  //Fills with color and redius
+  gradientCtx.fill();
 
   // Set text color and font
   gradientCtx.fillStyle = canvasTextColor;
@@ -115,3 +109,31 @@ app.get("/:dimensions", (req, res) => {
 app.listen(3000, () => {
   console.log("Server is running on http://localhost:3000");
 });
+
+function roundRect(ctx, x, y, width, height, radius) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+}
+
+function fillGradientColor(ctx, angle, width, height, startColor, endColor) {
+  const angleInRadians = angle * (Math.PI / 180);
+  const x2 = width * Math.cos(angleInRadians);
+  const y2 = height * Math.sin(angleInRadians);
+  const gr = ctx.createLinearGradient(0, 0, x2, y2);
+
+  // add color stops
+  gr.addColorStop(0, `#${startColor}`);
+  gr.addColorStop(1, `#${endColor}`);
+
+  // fill style with gradient
+  ctx.fillStyle = gr;
+}
