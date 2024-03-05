@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
@@ -58,9 +58,19 @@
                 display: flex;
                 justify-content: center;
             }
+            input[type="range"] {
+                margin: 0 10px;
+                padding: 0;
+            }
             .text-input {
-                max-width: 400px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                max-width: 600px;
                 margin: 20px auto 0;
+            }
+            .text-input label {
+                margin: 0 10px;
             }
             .text-input input {
                 width: 100%;
@@ -158,6 +168,15 @@
             </div>
 
             <div class="text-input">
+                <label for="radius">Radius:</label>
+                <input
+                    id="radius"
+                    type="range"
+                    max="100"
+                    min="0"
+                    value="0"
+                    oninput="generatePlaceholder()"
+                />
                 <input
                     oninput="generatePlaceholder()"
                     type="text"
@@ -181,7 +200,6 @@
 
                 if (useGradient) {
                     imageUrl += `gradient=true&startColor=${gradStart.substring(1)}&endColor=${gradEnd.substring(1)}&angle=${bgAngle}`;
-                    console.log(imageUrl)
                 } else {
                     imageUrl += `bg=${bgColor.substring(1)}`;
                 }
@@ -194,6 +212,10 @@
                 if (text) {
                     imageUrl += `&text=${text}`;
                 }
+
+                const radius = document.getElementById("radius").value;
+                imageUrl += `&radius=${radius}`;
+                document.getElementById("placeholder-image").style.borderRadius = `${radius}px`;
 
                 document.getElementById("placeholder-image").src = imageUrl;
             }
